@@ -1,0 +1,43 @@
+version: "3.7"
+services:
+  emby:
+    image: linuxserver/emby
+    container_name: emby
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Lima
+      - UMASK_SET=022 #optional
+    volumes:
+      - /datos_repo/docker/docker-images-data/emby_data_dir/config:/config
+      - /datos_repo/docker/docker-images-data/nextcloud_data_dir/multimedia/:/data/multimedia_volume #Compartir directorio
+      - /datos_repo/docker/docker-images-data/emby_data_dir/transcoding:/transcode #optional
+    ports:
+      - 8096:8096
+      - 8920:8920 #optional
+    restart: unless-stopped
+    networks:
+      - frontend
+    labels:
+      #### Labels define the behavior and rules of the traefik proxy for this container ####
+      - traefik.enable=true # <== Enable traefik to proxy this container
+      # URL HTTP
+      - traefik.http.routers.emby.rule=Host(`emby.palominocia.com`) # <== Your Domain Name goes here for the http rule
+      # Point d HTTP
+      - traefik.http.routers.emby.entrypoints=http
+      # Utilisation du middleware pour redirigé l'HTTP vers l'HTTPS
+      - traefik.http.routers.emby.middlewares=redirect@file
+      # Load balancer
+      - traefik.http.services.emby.loadbalancer.server.port=8096
+      # URL HTTPS
+      - traefik.http.routers.emby-secured.rule=Host(`emby.palominocia.com`)
+      # Point  HTTPS
+      - traefik.http.routers.emby-secured.entrypoints=https
+      # Activation de TLS
+      - traefik.http.routers.emby-secured.tls=true
+      - traefik.docker.network=frontend
+      
+networks:
+  frontend:
+    external:
+      name: frontend

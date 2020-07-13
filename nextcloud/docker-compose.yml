@@ -1,0 +1,68 @@
+version: '3.3'
+services :
+  db:
+    image: postgres:alpine
+    restart: always
+    volumes:
+      - db-volume:/var/lib/postgresql/data
+    env_file:
+      - db.env
+    networks:
+      - backend
+  redis:
+    image: redis:alpine
+    restart: always
+    volumes:
+      - redis-volume:/data
+    networks:
+      - backend
+
+  app:
+    image: nextcloud:apache
+    restart: always
+    ports:
+      - 8082:80
+    volumes:
+      - app-volume:/var/www/html
+      - /datos_repo/docker/docker-images-data/nextcloud_data_dir/:/nextcloud_data_dir
+    environment:
+      - POSTGRES_HOST=db
+      - REDIS_HOST=redis
+    env_file:
+      - db.env
+    depends_on:
+      - db
+      - redis
+    networks:
+      - backend
+      - frontend
+    labels:
+      #### Labels define the behavior and rules of the traefik proxy for this container ####
+      - traefik.enable=true # <== Enable traefik to proxy this container
+      # URL HTTP
+      - traefik.http.routers.nextcloud.rule=Host(`nextcloud.palominocia.com`) # <== Your Domain Name goes here for the http rule
+      # Point d HTTP
+      - traefik.http.routers.nextcloud.entrypoints=http
+      # Utilisation du middleware pour redirigé l'HTTP vers l'HTTPS
+      - traefik.http.routers.nextcloud.middlewares=redirect@file
+      # Load balancer
+      - traefik.http.services.nextcloud.loadbalancer.server.port=80
+      # URL HTTPS
+      - traefik.http.routers.nextcloud-secured.rule=Host(`nextcloud.palominocia.com`)
+      # Point  HTTPS
+      - traefik.http.routers.nextcloud-secured.entrypoints=https
+      # Activation de TLS
+      - traefik.http.routers.nextcloud-secured.tls=true
+      - traefik.docker.network=frontend
+volumes:
+  db-volume:
+  app-volume:
+  redis-volume:
+networks:
+  frontend:
+    external:
+      name: frontend
+  backend:
+    external:
+      name: nextcloud_backend
+

@@ -1,0 +1,42 @@
+version: '3.6'
+services :
+  app:
+    image: portainer/portainer
+    restart: always
+    container_name: portainer
+    ports:
+      - 8000:8000
+      - 9000:9000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - frontend
+    labels:
+      #### Labels define the behavior and rules of the traefik proxy for this container ####
+      - traefik.enable=true # <== Enable traefik to proxy this container
+      # URL HTTP
+      - traefik.http.routers.portainer.rule=Host(`portainer.palominocia.com`) # <== Your Domain Name goes here for the http rule
+      # Point d HTTP
+      - traefik.http.routers.portainer.entrypoints=http
+      # Utilisation du middleware pour redirigé l'HTTP vers l'HTTPS
+      - traefik.http.routers.portainer.middlewares=redirect@file
+      # Load balancer
+      - traefik.http.services.portainer.loadbalancer.server.port=9000
+      # URL HTTPS
+      - traefik.http.routers.portainer-secured.rule=Host(`portainer.palominocia.com`)
+      # Point  HTTPS
+      - traefik.http.routers.portainer-secured.entrypoints=https
+      # Activation de TLS
+      - traefik.http.routers.portainer-secured.tls=true
+      - traefik.docker.network=frontend
+      
+volumes:
+  portainer_data:
+    external: true
+    name:
+      portainer_data
+networks:
+  frontend:
+    external:
+      name: frontend

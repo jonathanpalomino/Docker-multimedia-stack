@@ -1,0 +1,42 @@
+# docker-compose.yml
+version: '3'
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+
+services:
+  reverse-proxy:
+    image: traefik:v2.2.1
+    container_name: reverse-proxy
+    # Activa interface web a demanda Traefik Docker
+    command: 
+      - --api.insecure=true
+      - --providers.docker
+    ports:
+      - "80:80"
+      - "443:443"
+      # interface web (activo para --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Configuracion estatica
+      - ./config/traefik.toml:/etc/traefik/traefik.toml:ro
+      # Configuracion dinamica
+      - ./config/traefik.config.toml:/etc/traefik/traefik.config.toml:ro
+      # Certificados por contenedor
+      - ./certs:/etc/certs:ro
+    networks:
+      - backend
+      - frontend
+    labels:
+      - "traefik.frontend.redirect.entryPoint=https"
+      - "traefik.enable=true" # <== Enable traefik on itself to view dashboard and assign subdomain to view it
+      - "traefik.http.routers.api.rule=Host(`monitor.palominocia.com`)" # <== Setting the domain for the dashboard
+      - "traefik.http.routers.api.service=api@internal" # <== Enabling the api to be a service to access
+networks:
+  frontend:
+    external: true
+  backend:
+    external: false
