@@ -16,7 +16,7 @@ services :
       #### Labels define the behavior and rules of the traefik proxy for this container ####
       - traefik.enable=true # <== Enable traefik to proxy this container
       # URL HTTP
-      - traefik.http.routers.portainer.rule=Host(`portainer.palominocia.com`) # <== Your Domain Name goes here for the http rule
+      - traefik.http.routers.portainer.rule=Host(`portainer.palominoia.com`) # <== Your Domain Name goes here for the http rule
       # Point d HTTP
       - traefik.http.routers.portainer.entrypoints=http
       # Utilisation du middleware pour redirigé l'HTTP vers l'HTTPS
@@ -24,7 +24,7 @@ services :
       # Load balancer
       - traefik.http.services.portainer.loadbalancer.server.port=9000
       # URL HTTPS
-      - traefik.http.routers.portainer-secured.rule=Host(`portainer.palominocia.com`)
+      - traefik.http.routers.portainer-secured.rule=Host(`portainer.palominoia.com`)
       # Point  HTTPS
       - traefik.http.routers.portainer-secured.entrypoints=https
       # Activation de TLS

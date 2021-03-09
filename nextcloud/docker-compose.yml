@@ -40,7 +40,7 @@ services :
       #### Labels define the behavior and rules of the traefik proxy for this container ####
       - traefik.enable=true # <== Enable traefik to proxy this container
       # URL HTTP
-      - traefik.http.routers.nextcloud.rule=Host(`nextcloud.palominocia.com`) # <== Your Domain Name goes here for the http rule
+      - traefik.http.routers.nextcloud.rule=Host(`nextcloud.palominoia.com`) # <== Your Domain Name goes here for the http rule
       # Point d HTTP
       - traefik.http.routers.nextcloud.entrypoints=http
       # Utilisation du middleware pour redirigé l'HTTP vers l'HTTPS
@@ -48,7 +48,7 @@ services :
       # Load balancer
       - traefik.http.services.nextcloud.loadbalancer.server.port=80
       # URL HTTPS
-      - traefik.http.routers.nextcloud-secured.rule=Host(`nextcloud.palominocia.com`)
+      - traefik.http.routers.nextcloud-secured.rule=Host(`nextcloud.palominoia.com`)
       # Point  HTTPS
       - traefik.http.routers.nextcloud-secured.entrypoints=https
       # Activation de TLS
