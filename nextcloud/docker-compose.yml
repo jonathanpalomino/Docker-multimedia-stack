@@ -14,8 +14,11 @@ services :
     restart: always
     volumes:
       - redis-volume:/data
+    env_file:
+      - db.env
     networks:
       - backend
+    command: redis-server --requirepass 123456
 
   app:
     image: nextcloud:apache
@@ -24,10 +27,13 @@ services :
       - 8082:80
     volumes:
       - app-volume:/var/www/html
-      - /datos_repo/docker/docker-images-data/nextcloud_data_dir/:/nextcloud_data_dir
+      - /docker/docker-images-data/nextcloud_data_dir/:/nextcloud_data_dir
+      - /datos_externos/:/nextcloud_externo_dir
     environment:
       - POSTGRES_HOST=db
       - REDIS_HOST=redis
+      - PHP_MEMORY_LIMIT=2048M
+      - PHP_UPLOAD_LIMIT=1024M
     env_file:
       - db.env
     depends_on:
@@ -65,4 +71,3 @@ networks:
   backend:
     external:
       name: nextcloud_backend
-

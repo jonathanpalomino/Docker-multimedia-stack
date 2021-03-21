@@ -5,5 +5,5 @@
 
 [tls]
   [[tls.certificates]]
-    certFile = "/etc/certs/local-cert.pem"
-    keyFile = "/etc/certs/local-key.pem"
+    certFile = "/etc/certs/palominoia.com+4.pem"
+    keyFile = "/etc/certs/palominoia.com+4-key.pem"

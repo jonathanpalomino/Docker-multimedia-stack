@@ -9,9 +9,10 @@ services:
       - TZ=America/Lima
       - UMASK_SET=022 #optional
     volumes:
-      - /datos_repo/docker/docker-images-data/emby_data_dir/config:/config
-      - /datos_repo/docker/docker-images-data/nextcloud_data_dir/multimedia/:/data/multimedia_volume #Compartir directorio
-      - /datos_repo/docker/docker-images-data/emby_data_dir/transcoding:/transcode #optional
+      - /docker/docker-images-data/emby_data_dir/config:/config
+      - /datos_externos/:/data/multimedia_volume #Compartir directorio
+      - /docker/docker-images-data/emby_data_dir/backup/:/backup #Compartir directorio
+      - /docker/docker-images-data/emby_data_dir/transcoding:/transcode #optional
     ports:
       - 8096:8096
       - 8920:8920 #optional

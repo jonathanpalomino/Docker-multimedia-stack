@@ -8,7 +8,7 @@ networks:
 
 services:
   reverse-proxy:
-    image: traefik:v2.4.7
+    image: traefik:v2.4
     container_name: reverse-proxy
     # Activa interface web a demanda Traefik Docker
     command: 
